@@ -5,8 +5,9 @@ const bcrypt = require('bcryptjs');
 const _ = require('underscore');
 const Usuario = require('../models/usuario');
 
+const { verificaToken, verificaAdmin_Role } = require('../middlewares/autenticacion');
 
-app.get('/usuario', function(req, res) {
+app.get('/usuario', verificaToken, (req, res) => {
 
     //En caso de que el usuario no nos especifique el numero, suponemos que quiere verlos desde el numero 0.
     let desde = req.query.desde || 0;
@@ -45,7 +46,7 @@ app.get('/usuario', function(req, res) {
 
 });
 
-app.post('/usuario', function(req, res) {
+app.post('/usuario', [verificaToken, verificaAdmin_Role], function(req, res) {
 
     let body = req.body;
 
@@ -83,7 +84,7 @@ app.post('/usuario', function(req, res) {
 //Por put se entiende la actualizacion de un registro.
 //En este caso obtendremos el id de un registro y lo usaremos para buscar en la base de datos.
 //Y a la vez actualizar el registro que coincida.
-app.put('/usuario/:id', function(req, res) {
+app.put('/usuario/:id', [verificaToken, verificaAdmin_Role], function(req, res) {
 
     let id = req.params.id;
     //Dentro del arreglo colocamos los objetos que si queremos que sean modificados.
@@ -110,7 +111,7 @@ app.put('/usuario/:id', function(req, res) {
 
 });
 
-app.delete('/usuario/:id', function(req, res) {
+app.delete('/usuario/:id', [verificaToken, verificaAdmin_Role], function(req, res) {
 
     //Obtenemos el id.
     let id = req.params.id;
